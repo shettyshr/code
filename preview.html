@@ -3,292 +3,286 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Loyalty Points – Preview</title>
+<title>Loyalty Points – UI Preview</title>
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: #e8eaf0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #d0d4de;
+    padding: 40px 20px;
     display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
     justify-content: center;
     align-items: flex-start;
-    min-height: 100vh;
-    padding: 40px 20px;
-    gap: 40px;
-    flex-wrap: wrap;
   }
 
-  /* Phone shell */
+  .screen-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .screen-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; color: #666;
+  }
+
+  /* Phone shell — fixed size */
   .phone {
     width: 375px;
+    height: 720px;
     background: #f8f9fa;
-    border-radius: 44px;
-    box-shadow: 0 30px 80px rgba(0,0,0,0.25), 0 0 0 10px #1a1a1a, 0 0 0 12px #333;
+    border-radius: 48px;
+    border: 10px solid #111;
+    box-shadow: 0 0 0 2px #333, 0 24px 60px rgba(0,0,0,0.35);
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    position: relative;
   }
-  .phone-notch {
-    background: #1a1a1a;
-    height: 34px;
+
+  /* Status bar */
+  .status-bar {
+    background: #fff;
+    height: 36px;
     display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    padding-bottom: 6px;
-    border-radius: 0 0 20px 20px;
-    margin: 0 60px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #111;
+    flex-shrink: 0;
   }
-  .phone-notch-inner {
-    width: 120px;
-    height: 20px;
-    background: #1a1a1a;
-    border-radius: 10px;
-  }
-  .screen { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
   /* App header */
   .app-header {
+    background: #fff;
+    border-bottom: 1px solid #e8e8e8;
+    padding: 12px 18px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 14px 20px;
-    background: #fff;
-    border-bottom: 1px solid #e0e0e0;
+    flex-shrink: 0;
   }
-  .app-title { font-size: 22px; font-weight: 700; color: #1a1a1a; }
-  .app-subtitle { font-size: 12px; color: #888; margin-top: 2px; }
+  .app-title { font-size: 20px; font-weight: 700; color: #111; }
+  .app-sub { font-size: 11px; color: #999; margin-top: 1px; }
   .add-btn {
     background: #1a73e8;
     color: #fff;
-    font-weight: 600;
-    font-size: 13px;
     border: none;
-    border-radius: 20px;
+    border-radius: 18px;
     padding: 7px 16px;
+    font-size: 13px;
+    font-weight: 600;
     cursor: pointer;
   }
 
-  /* Tab bar */
-  .tab-bar {
+  /* Tabs */
+  .tabs {
     display: flex;
     background: #fff;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e8e8e8;
+    flex-shrink: 0;
   }
   .tab {
     flex: 1;
     text-align: center;
-    padding: 11px;
+    padding: 10px;
     font-size: 13px;
     font-weight: 500;
-    color: #888;
-    border-bottom: 2px solid transparent;
-    cursor: pointer;
+    color: #999;
+    border-bottom: 2.5px solid transparent;
   }
-  .tab.active { color: #1a73e8; border-bottom-color: #1a73e8; font-weight: 600; }
+  .tab.on { color: #1a73e8; border-bottom-color: #1a73e8; font-weight: 700; }
 
-  /* Scrollable content */
-  .content { flex: 1; overflow-y: auto; padding: 16px; }
+  /* Scrollable body */
+  .body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px;
+  }
 
   /* Grand total */
-  .grand-total {
-    background: #1a73e8;
+  .grand-card {
+    background: linear-gradient(135deg, #1a73e8, #1557b0);
     border-radius: 16px;
-    padding: 24px;
+    padding: 22px;
     text-align: center;
-    margin-bottom: 22px;
-    box-shadow: 0 6px 20px rgba(26,115,232,0.35);
+    margin-bottom: 18px;
+    box-shadow: 0 6px 20px rgba(26,115,232,0.4);
   }
-  .gt-label { color: rgba(255,255,255,0.8); font-size: 13px; font-weight: 500; }
-  .gt-value { color: #fff; font-size: 44px; font-weight: 800; margin: 4px 0; letter-spacing: -1px; }
-  .gt-sub { color: rgba(255,255,255,0.7); font-size: 12px; }
+  .gc-label { color: rgba(255,255,255,0.8); font-size: 12px; font-weight: 500; }
+  .gc-val { color: #fff; font-size: 42px; font-weight: 800; letter-spacing: -1px; margin: 4px 0; }
+  .gc-sub { color: rgba(255,255,255,0.65); font-size: 11px; }
 
-  /* Section title */
-  .section-title { font-size: 15px; font-weight: 700; color: #1a1a1a; margin-bottom: 10px; }
+  .section-head { font-size: 13px; font-weight: 700; color: #111; margin-bottom: 10px; }
 
   /* Summary cards */
-  .summary-card {
+  .sum-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 13px 14px;
+    margin-bottom: 9px;
+    border-left: 4px solid;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.07);
     display: flex;
     align-items: center;
-    background: #fff;
-    border-radius: 12px;
-    padding: 14px 16px;
-    margin-bottom: 10px;
-    border-left: 4px solid;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    gap: 12px;
   }
-  .summary-icon { font-size: 26px; margin-right: 14px; }
-  .summary-label { font-size: 13px; color: #666; font-weight: 500; }
-  .summary-points { font-size: 24px; font-weight: 700; margin: 2px 0; }
-  .summary-count { font-size: 11px; color: #999; }
+  .sum-icon { font-size: 26px; }
+  .sum-lbl { font-size: 12px; color: #777; font-weight: 500; }
+  .sum-pts { font-size: 22px; font-weight: 800; margin: 2px 0; }
+  .sum-cnt { font-size: 11px; color: #aaa; }
 
-  /* Programs tab */
-  .filter-row { display: flex; gap: 8px; margin-bottom: 14px; overflow-x: auto; padding-bottom: 4px; }
-  .filter-chip {
+  /* Filter chips */
+  .chips {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    margin-bottom: 14px;
+  }
+  .chip {
     white-space: nowrap;
-    padding: 6px 14px;
-    border-radius: 20px;
+    padding: 5px 13px;
+    border-radius: 18px;
     border: 1.5px solid #ddd;
     background: #fff;
-    font-size: 12px;
-    font-weight: 500;
+    font-size: 11px;
+    font-weight: 600;
     color: #555;
-    cursor: pointer;
-    flex-shrink: 0;
   }
-  .filter-chip.active { color: #fff; }
+  .chip.on { color: #fff; }
 
-  .group-header { font-size: 14px; font-weight: 700; margin: 6px 0 8px; }
+  /* Group header */
+  .grp { font-size: 13px; font-weight: 700; margin: 6px 0 8px; }
 
-  .program-card {
+  /* Program card */
+  .prog-card {
     background: #fff;
     border-radius: 12px;
-    padding: 12px 14px;
+    padding: 11px 13px;
     margin-bottom: 8px;
     border-left: 4px solid;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.07);
   }
-  .program-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; }
-  .program-title-row { display: flex; align-items: center; gap: 6px; }
-  .program-icon { font-size: 15px; }
-  .program-name { font-size: 14px; font-weight: 600; color: #1a1a1a; }
-  .program-actions { display: flex; gap: 6px; }
-  .action-btn {
-    font-size: 11px;
-    font-weight: 500;
-    padding: 3px 9px;
-    border-radius: 7px;
-    border: 1.5px solid;
-    cursor: pointer;
-    background: none;
+  .prog-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 3px;
   }
-  .edit-btn { color: #1a73e8; border-color: #1a73e8; }
-  .del-btn { color: #e53935; border-color: #e53935; }
-  .program-points { font-size: 20px; font-weight: 700; margin: 4px 0; }
-  .program-meta { font-size: 11px; color: #666; margin-top: 2px; }
-  .program-updated { font-size: 10px; color: #bbb; margin-top: 3px; }
+  .prog-name { font-size: 13px; font-weight: 600; color: #111; }
+  .prog-acts { display: flex; gap: 5px; }
+  .act {
+    font-size: 10px; font-weight: 600;
+    padding: 2px 8px; border-radius: 6px;
+    border: 1.5px solid; background: none; cursor: pointer;
+  }
+  .prog-pts { font-size: 19px; font-weight: 800; margin: 3px 0 2px; }
+  .prog-meta { font-size: 10px; color: #777; margin-top: 1px; }
+  .prog-upd { font-size: 9px; color: #ccc; margin-top: 3px; }
 
   /* Modal overlay */
-  .modal-overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.4);
-    display: flex; align-items: flex-end; justify-content: center;
-    z-index: 100;
-  }
-  .modal {
-    background: #f8f9fa;
-    border-radius: 24px 24px 0 0;
-    width: 375px;
-    max-height: 88vh;
+  .modal-bg {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.45);
     display: flex;
-    flex-direction: column;
-    box-shadow: 0 -8px 40px rgba(0,0,0,0.2);
-    overflow: hidden;
+    align-items: flex-end;
+  }
+  .modal-sheet {
+    background: #f8f9fa;
+    border-radius: 20px 20px 0 0;
+    width: 100%;
+    box-shadow: 0 -6px 30px rgba(0,0,0,0.2);
   }
   .modal-handle {
-    width: 36px; height: 4px;
-    background: #ccc; border-radius: 2px;
-    margin: 10px auto 0;
+    width: 34px; height: 4px; background: #ccc;
+    border-radius: 2px; margin: 10px auto 0;
   }
-  .modal-header {
+  .modal-hdr {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 12px 20px 12px;
+    padding: 10px 18px 10px;
+    border-bottom: 1px solid #e8e8e8;
     background: #fff;
-    border-bottom: 1px solid #e0e0e0;
   }
-  .modal-cancel { font-size: 15px; color: #666; cursor: pointer; }
-  .modal-title { font-size: 16px; font-weight: 600; color: #1a1a1a; }
-  .modal-save { font-size: 15px; font-weight: 600; color: #1a73e8; cursor: pointer; }
-  .modal-body { flex: 1; overflow-y: auto; padding: 4px 20px 24px; }
-  .field-label {
-    font-size: 11px; font-weight: 600; color: #555;
-    margin: 16px 0 6px; text-transform: uppercase; letter-spacing: 0.5px;
+  .m-cancel { font-size: 14px; color: #888; }
+  .m-title { font-size: 15px; font-weight: 700; color: #111; }
+  .m-save { font-size: 14px; font-weight: 700; color: #1a73e8; }
+  .modal-body { padding: 4px 16px 20px; }
+  .f-lbl {
+    font-size: 10px; font-weight: 700; color: #666;
+    text-transform: uppercase; letter-spacing: 0.6px;
+    margin: 12px 0 5px;
   }
-  .input {
-    width: 100%;
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    padding: 11px 14px;
-    font-size: 14px;
-    color: #1a1a1a;
-    font-family: inherit;
+  .f-input {
+    width: 100%; background: #fff; border: 1px solid #ddd;
+    border-radius: 9px; padding: 9px 12px;
+    font-size: 13px; color: #111; font-family: inherit;
   }
-  .category-row { display: flex; gap: 8px; }
+  .f-input::placeholder { color: #bbb; }
+  .cat-row { display: flex; gap: 7px; }
   .cat-chip {
     flex: 1; display: flex; flex-direction: column;
     align-items: center; padding: 8px 4px;
     border-radius: 10px; border: 1.5px solid #ddd;
-    background: #fff; cursor: pointer;
+    background: #fff;
   }
-  .cat-chip.active { color: #fff; }
-  .cat-chip-icon { font-size: 18px; margin-bottom: 3px; }
-  .cat-chip-text { font-size: 10px; font-weight: 500; }
-
-  /* Labels */
-  .screen-label {
-    text-align: center;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: #888;
-    margin-top: 12px;
-  }
+  .cat-chip.on { color: #fff; }
+  .cc-icon { font-size: 18px; margin-bottom: 2px; }
+  .cc-txt { font-size: 9px; font-weight: 600; }
 </style>
 </head>
 <body>
 
-<!-- ── Screen 1: Dashboard ──────────────────────────────────── -->
-<div>
+<!-- ── SCREEN 1: Dashboard ── -->
+<div class="screen-wrap">
   <div class="phone">
-    <div class="screen">
-      <div class="app-header">
+    <div class="status-bar">
+      <span>9:41</span>
+      <span>●●●</span>
+    </div>
+    <div class="app-header">
+      <div>
+        <div class="app-title">Loyalty Points</div>
+        <div class="app-sub">All your rewards in one place</div>
+      </div>
+      <button class="add-btn">+ Add</button>
+    </div>
+    <div class="tabs">
+      <div class="tab on">Dashboard</div>
+      <div class="tab">Programs</div>
+    </div>
+    <div class="body">
+      <div class="grand-card">
+        <div class="gc-label">Total Points</div>
+        <div class="gc-val">287,450</div>
+        <div class="gc-sub">across 6 programs</div>
+      </div>
+
+      <div class="section-head">By Category</div>
+
+      <div class="sum-card" style="border-left-color:#1a73e8">
+        <div class="sum-icon">✈️</div>
         <div>
-          <div class="app-title">Loyalty Points</div>
-          <div class="app-subtitle">All your rewards in one place</div>
+          <div class="sum-lbl">Airline</div>
+          <div class="sum-pts" style="color:#1a73e8">132,500</div>
+          <div class="sum-cnt">3 programs</div>
         </div>
-        <button class="add-btn">+ Add</button>
       </div>
 
-      <div class="tab-bar">
-        <div class="tab active">Dashboard</div>
-        <div class="tab">Programs</div>
+      <div class="sum-card" style="border-left-color:#7c4dff">
+        <div class="sum-icon">💳</div>
+        <div>
+          <div class="sum-lbl">Credit Card</div>
+          <div class="sum-pts" style="color:#7c4dff">98,950</div>
+          <div class="sum-cnt">2 programs</div>
+        </div>
       </div>
 
-      <div class="content">
-        <div class="grand-total">
-          <div class="gt-label">Total Points</div>
-          <div class="gt-value">287,450</div>
-          <div class="gt-sub">across 6 programs</div>
-        </div>
-
-        <div class="section-title">By Category</div>
-
-        <div class="summary-card" style="border-left-color:#1a73e8">
-          <div class="summary-icon">✈️</div>
-          <div>
-            <div class="summary-label">Airline</div>
-            <div class="summary-points" style="color:#1a73e8">132,500</div>
-            <div class="summary-count">3 programs</div>
-          </div>
-        </div>
-
-        <div class="summary-card" style="border-left-color:#7c4dff">
-          <div class="summary-icon">💳</div>
-          <div>
-            <div class="summary-label">Credit Card</div>
-            <div class="summary-points" style="color:#7c4dff">98,950</div>
-            <div class="summary-count">2 programs</div>
-          </div>
-        </div>
-
-        <div class="summary-card" style="border-left-color:#ff6d00">
-          <div class="summary-icon">🏨</div>
-          <div>
-            <div class="summary-label">Hotel</div>
-            <div class="summary-points" style="color:#ff6d00">56,000</div>
-            <div class="summary-count">1 program</div>
-          </div>
+      <div class="sum-card" style="border-left-color:#ff6d00">
+        <div class="sum-icon">🏨</div>
+        <div>
+          <div class="sum-lbl">Hotel</div>
+          <div class="sum-pts" style="color:#ff6d00">56,000</div>
+          <div class="sum-cnt">1 program</div>
         </div>
       </div>
     </div>
@@ -296,164 +290,154 @@
   <div class="screen-label">Dashboard</div>
 </div>
 
-<!-- ── Screen 2: Programs ───────────────────────────────────── -->
-<div>
+<!-- ── SCREEN 2: Programs ── -->
+<div class="screen-wrap">
   <div class="phone">
-    <div class="screen">
-      <div class="app-header">
-        <div>
-          <div class="app-title">Loyalty Points</div>
-          <div class="app-subtitle">All your rewards in one place</div>
-        </div>
-        <button class="add-btn">+ Add</button>
+    <div class="status-bar">
+      <span>9:41</span>
+      <span>●●●</span>
+    </div>
+    <div class="app-header">
+      <div>
+        <div class="app-title">Loyalty Points</div>
+        <div class="app-sub">All your rewards in one place</div>
+      </div>
+      <button class="add-btn">+ Add</button>
+    </div>
+    <div class="tabs">
+      <div class="tab">Dashboard</div>
+      <div class="tab on">Programs</div>
+    </div>
+    <div class="body">
+      <div class="chips">
+        <div class="chip on" style="background:#444;border-color:#444">All</div>
+        <div class="chip">✈️ Airline</div>
+        <div class="chip">💳 Credit Card</div>
+        <div class="chip">🏨 Hotel</div>
       </div>
 
-      <div class="tab-bar">
-        <div class="tab">Dashboard</div>
-        <div class="tab active">Programs</div>
+      <div class="grp" style="color:#1a73e8">✈️ Airline</div>
+
+      <div class="prog-card" style="border-left-color:#1a73e8">
+        <div class="prog-top">
+          <div class="prog-name">United MileagePlus</div>
+          <div class="prog-acts">
+            <button class="act" style="color:#1a73e8;border-color:#1a73e8">Edit</button>
+            <button class="act" style="color:#e53935;border-color:#e53935">Delete</button>
+          </div>
+        </div>
+        <div class="prog-pts" style="color:#1a73e8">72,300 pts</div>
+        <div class="prog-meta">Account: UA-987654321</div>
+        <div class="prog-meta">Expires: 2027-06-30</div>
+        <div class="prog-upd">Updated: 2026-03-05</div>
       </div>
 
-      <div class="content">
-        <div class="filter-row">
-          <div class="filter-chip active" style="background:#444;border-color:#444">All</div>
-          <div class="filter-chip">✈️ Airline</div>
-          <div class="filter-chip">💳 Credit Card</div>
-          <div class="filter-chip">🏨 Hotel</div>
-        </div>
-
-        <!-- Airline group -->
-        <div class="group-header" style="color:#1a73e8">✈️ Airline</div>
-
-        <div class="program-card" style="border-left-color:#1a73e8">
-          <div class="program-header">
-            <div class="program-title-row">
-              <span class="program-icon">✈️</span>
-              <span class="program-name">United MileagePlus</span>
-            </div>
-            <div class="program-actions">
-              <button class="action-btn edit-btn">Edit</button>
-              <button class="action-btn del-btn">Delete</button>
-            </div>
+      <div class="prog-card" style="border-left-color:#1a73e8">
+        <div class="prog-top">
+          <div class="prog-name">Delta SkyMiles</div>
+          <div class="prog-acts">
+            <button class="act" style="color:#1a73e8;border-color:#1a73e8">Edit</button>
+            <button class="act" style="color:#e53935;border-color:#e53935">Delete</button>
           </div>
-          <div class="program-points" style="color:#1a73e8">72,300 pts</div>
-          <div class="program-meta">Account: UA-987654321</div>
-          <div class="program-meta">Expires: 2027-06-30</div>
-          <div class="program-updated">Updated: 2026-03-05</div>
         </div>
+        <div class="prog-pts" style="color:#1a73e8">41,200 pts</div>
+        <div class="prog-meta">Account: DL-112233445</div>
+        <div class="prog-upd">Updated: 2026-03-05</div>
+      </div>
 
-        <div class="program-card" style="border-left-color:#1a73e8">
-          <div class="program-header">
-            <div class="program-title-row">
-              <span class="program-icon">✈️</span>
-              <span class="program-name">Delta SkyMiles</span>
-            </div>
-            <div class="program-actions">
-              <button class="action-btn edit-btn">Edit</button>
-              <button class="action-btn del-btn">Delete</button>
-            </div>
+      <div class="grp" style="color:#7c4dff">💳 Credit Card</div>
+
+      <div class="prog-card" style="border-left-color:#7c4dff">
+        <div class="prog-top">
+          <div class="prog-name">Chase Sapphire Reserve</div>
+          <div class="prog-acts">
+            <button class="act" style="color:#1a73e8;border-color:#1a73e8">Edit</button>
+            <button class="act" style="color:#e53935;border-color:#e53935">Delete</button>
           </div>
-          <div class="program-points" style="color:#1a73e8">41,200 pts</div>
-          <div class="program-meta">Account: DL-112233445</div>
-          <div class="program-updated">Updated: 2026-03-05</div>
         </div>
+        <div class="prog-pts" style="color:#7c4dff">58,950 pts</div>
+        <div class="prog-meta">Account: ••••4821</div>
+        <div class="prog-upd">Updated: 2026-03-05</div>
+      </div>
 
-        <!-- Credit Card group -->
-        <div class="group-header" style="color:#7c4dff">💳 Credit Card</div>
+      <div class="grp" style="color:#ff6d00">🏨 Hotel</div>
 
-        <div class="program-card" style="border-left-color:#7c4dff">
-          <div class="program-header">
-            <div class="program-title-row">
-              <span class="program-icon">💳</span>
-              <span class="program-name">Chase Sapphire</span>
-            </div>
-            <div class="program-actions">
-              <button class="action-btn edit-btn">Edit</button>
-              <button class="action-btn del-btn">Delete</button>
-            </div>
+      <div class="prog-card" style="border-left-color:#ff6d00">
+        <div class="prog-top">
+          <div class="prog-name">Marriott Bonvoy</div>
+          <div class="prog-acts">
+            <button class="act" style="color:#1a73e8;border-color:#1a73e8">Edit</button>
+            <button class="act" style="color:#e53935;border-color:#e53935">Delete</button>
           </div>
-          <div class="program-points" style="color:#7c4dff">58,950 pts</div>
-          <div class="program-meta">Account: ••••4821</div>
-          <div class="program-updated">Updated: 2026-03-05</div>
         </div>
-
-        <!-- Hotel group -->
-        <div class="group-header" style="color:#ff6d00">🏨 Hotel</div>
-
-        <div class="program-card" style="border-left-color:#ff6d00">
-          <div class="program-header">
-            <div class="program-title-row">
-              <span class="program-icon">🏨</span>
-              <span class="program-name">Marriott Bonvoy</span>
-            </div>
-            <div class="program-actions">
-              <button class="action-btn edit-btn">Edit</button>
-              <button class="action-btn del-btn">Delete</button>
-            </div>
-          </div>
-          <div class="program-points" style="color:#ff6d00">56,000 pts</div>
-          <div class="program-meta">Account: MB-556677889</div>
-          <div class="program-meta">Expires: 2026-12-31</div>
-          <div class="program-updated">Updated: 2026-03-05</div>
-        </div>
+        <div class="prog-pts" style="color:#ff6d00">56,000 pts</div>
+        <div class="prog-meta">Account: MB-556677889</div>
+        <div class="prog-meta">Expires: 2026-12-31</div>
+        <div class="prog-upd">Updated: 2026-03-05</div>
       </div>
     </div>
   </div>
   <div class="screen-label">Programs</div>
 </div>
 
-<!-- ── Screen 3: Add Program Modal ─────────────────────────── -->
-<div>
-  <div class="phone" style="position:relative;overflow:hidden">
-    <div class="screen" style="filter:brightness(0.6)">
-      <div class="app-header">
-        <div>
-          <div class="app-title">Loyalty Points</div>
-          <div class="app-subtitle">All your rewards in one place</div>
-        </div>
-        <button class="add-btn">+ Add</button>
-      </div>
-      <div class="tab-bar">
-        <div class="tab active">Dashboard</div>
-        <div class="tab">Programs</div>
-      </div>
+<!-- ── SCREEN 3: Add Program Modal ── -->
+<div class="screen-wrap">
+  <div class="phone">
+    <div class="status-bar">
+      <span>9:41</span>
+      <span>●●●</span>
     </div>
-
-    <!-- Modal sheet -->
-    <div style="position:absolute;bottom:0;left:0;right:0;background:#f8f9fa;border-radius:24px 24px 0 0;box-shadow:0 -8px 40px rgba(0,0,0,0.25);">
-      <div class="modal-handle"></div>
-      <div class="modal-header">
-        <span class="modal-cancel">Cancel</span>
-        <span class="modal-title">Add Program</span>
-        <span class="modal-save">Save</span>
+    <div class="app-header" style="filter:brightness(0.55)">
+      <div>
+        <div class="app-title">Loyalty Points</div>
+        <div class="app-sub">All your rewards in one place</div>
       </div>
-      <div class="modal-body">
-        <div class="field-label">Category</div>
-        <div class="category-row">
-          <div class="cat-chip active" style="background:#1a73e8;border-color:#1a73e8;color:#fff">
-            <span class="cat-chip-icon">✈️</span>
-            <span class="cat-chip-text">Airline</span>
-          </div>
-          <div class="cat-chip">
-            <span class="cat-chip-icon">💳</span>
-            <span class="cat-chip-text" style="color:#555">Credit Card</span>
-          </div>
-          <div class="cat-chip">
-            <span class="cat-chip-icon">🏨</span>
-            <span class="cat-chip-text" style="color:#555">Hotel</span>
-          </div>
+      <button class="add-btn">+ Add</button>
+    </div>
+    <div class="tabs" style="filter:brightness(0.55)">
+      <div class="tab on">Dashboard</div>
+      <div class="tab">Programs</div>
+    </div>
+    <div class="body" style="filter:brightness(0.55); background:#ccc;"></div>
+
+    <!-- Modal sheet overlaid -->
+    <div class="modal-bg">
+      <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-hdr">
+          <span class="m-cancel">Cancel</span>
+          <span class="m-title">Add Program</span>
+          <span class="m-save">Save</span>
         </div>
+        <div class="modal-body">
+          <div class="f-lbl">Category</div>
+          <div class="cat-row">
+            <div class="cat-chip on" style="background:#1a73e8;border-color:#1a73e8">
+              <span class="cc-icon">✈️</span>
+              <span class="cc-txt" style="color:#fff">Airline</span>
+            </div>
+            <div class="cat-chip">
+              <span class="cc-icon">💳</span>
+              <span class="cc-txt" style="color:#555">Credit Card</span>
+            </div>
+            <div class="cat-chip">
+              <span class="cc-icon">🏨</span>
+              <span class="cc-txt" style="color:#555">Hotel</span>
+            </div>
+          </div>
 
-        <div class="field-label">Program Name *</div>
-        <input class="input" placeholder="e.g. United MileagePlus" />
+          <div class="f-lbl">Program Name *</div>
+          <input class="f-input" placeholder="e.g. United MileagePlus" />
 
-        <div class="field-label">Points Balance *</div>
-        <input class="input" placeholder="e.g. 50000" type="number" />
+          <div class="f-lbl">Points Balance *</div>
+          <input class="f-input" placeholder="e.g. 50000" />
 
-        <div class="field-label">Account Number (optional)</div>
-        <input class="input" placeholder="e.g. UA-123456789" />
+          <div class="f-lbl">Account Number (optional)</div>
+          <input class="f-input" placeholder="e.g. UA-123456789" />
 
-        <div class="field-label">Expiration Date (optional)</div>
-        <input class="input" placeholder="e.g. 2026-12-31" />
+          <div class="f-lbl">Expiration Date (optional)</div>
+          <input class="f-input" placeholder="e.g. 2026-12-31" />
+        </div>
       </div>
     </div>
   </div>
