@@ -1,45 +1,56 @@
-import React from 'react';
-import {
-  SafeAreaView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import React, { useState } from 'react';
+import { Contact, Screen } from './src/types';
+import { INITIAL_CONTACTS } from './src/sampleData';
+import RolodexScreen from './src/screens/RolodexScreen';
+import ContactDetailScreen from './src/screens/ContactDetailScreen';
+import AddEditContactScreen from './src/screens/AddEditContactScreen';
 
-function App(): React.JSX.Element {
+export default function App() {
+  const [contacts, setContacts] = useState<Contact[]>(INITIAL_CONTACTS);
+  const [screen, setScreen] = useState<Screen>({ name: 'rolodex' });
+
+  function handleSave(updated: Contact) {
+    setContacts(prev => {
+      const exists = prev.find(c => c.id === updated.id);
+      if (exists) return prev.map(c => (c.id === updated.id ? updated : c));
+      return [...prev, updated];
+    });
+  }
+
+  function handleDelete(id: string) {
+    setContacts(prev => prev.filter(c => c.id !== id));
+  }
+
+  if (screen.name === 'detail') {
+    const contact = contacts.find(c => c.id === screen.contactId);
+    if (contact) {
+      return (
+        <ContactDetailScreen
+          contact={contact}
+          onNavigate={setScreen}
+          onDelete={handleDelete}
+        />
+      );
+    }
+  }
+
+  if (screen.name === 'addEdit') {
+    const contact = screen.contactId
+      ? contacts.find(c => c.id === screen.contactId)
+      : undefined;
+    return (
+      <AddEditContactScreen
+        contact={contact}
+        onSave={handleSave}
+        onNavigate={setScreen}
+      />
+    );
+  }
+
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#ffffff" />
-      <View style={styles.content}>
-        <Text style={styles.title}>Hello World!</Text>
-        <Text style={styles.subtitle}>Welcome to my mobile app</Text>
-      </View>
-    </SafeAreaView>
+    <RolodexScreen
+      contacts={contacts}
+      onNavigate={setScreen}
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-  },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
-  },
-  title: {
-    fontSize: 48,
-    fontWeight: 'bold',
-    color: '#1a1a1a',
-    marginBottom: 12,
-  },
-  subtitle: {
-    fontSize: 18,
-    color: '#666666',
-  },
-});
-
-export default App;
