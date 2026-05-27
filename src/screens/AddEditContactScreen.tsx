@@ -1,16 +1,4 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
-  StyleSheet,
-  SafeAreaView,
-  StatusBar,
-  KeyboardAvoidingView,
-  Platform,
-} from 'react-native';
 import { Contact, Screen } from '../types';
 import { SPECIALTIES, SPECIALTY_COLORS } from '../sampleData';
 
@@ -18,39 +6,6 @@ interface Props {
   contact?: Contact;
   onSave: (contact: Contact) => void;
   onNavigate: (screen: Screen) => void;
-}
-
-function Field({
-  label,
-  value,
-  onChange,
-  placeholder,
-  multiline,
-  keyboardType,
-}: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  placeholder?: string;
-  multiline?: boolean;
-  keyboardType?: 'default' | 'email-address' | 'phone-pad';
-}) {
-  return (
-    <View style={styles.field}>
-      <Text style={styles.fieldLabel}>{label}</Text>
-      <TextInput
-        style={[styles.fieldInput, multiline && styles.fieldInputMulti]}
-        value={value}
-        onChangeText={onChange}
-        placeholder={placeholder ?? ''}
-        placeholderTextColor="#9ca3af"
-        multiline={multiline}
-        numberOfLines={multiline ? 4 : 1}
-        keyboardType={keyboardType ?? 'default'}
-        textAlignVertical={multiline ? 'top' : 'center'}
-      />
-    </View>
-  );
 }
 
 export default function AddEditContactScreen({ contact, onSave, onNavigate }: Props) {
@@ -61,15 +16,13 @@ export default function AddEditContactScreen({ contact, onSave, onNavigate }: Pr
   const [email, setEmail] = useState(contact?.email ?? '');
   const [company, setCompany] = useState(contact?.company ?? '');
   const [notes, setNotes] = useState(contact?.notes ?? '');
-  const [showSpecialtyPicker, setShowSpecialtyPicker] = useState(false);
+  const [showPicker, setShowPicker] = useState(false);
   const [nameError, setNameError] = useState('');
 
+  const color = SPECIALTY_COLORS[specialty] ?? '#4A5568';
+
   function handleSave() {
-    if (!name.trim()) {
-      setNameError('Name is required');
-      return;
-    }
-    const now = new Date().toISOString().split('T')[0];
+    if (!name.trim()) { setNameError('Name is required'); return; }
     const saved: Contact = {
       id: contact?.id ?? String(Date.now()),
       name: name.trim(),
@@ -78,216 +31,123 @@ export default function AddEditContactScreen({ contact, onSave, onNavigate }: Pr
       email: email.trim(),
       company: company.trim(),
       notes: notes.trim(),
-      createdAt: contact?.createdAt ?? now,
+      createdAt: contact?.createdAt ?? new Date().toISOString().split('T')[0],
     };
     onSave(saved);
     onNavigate({ name: 'detail', contactId: saved.id });
   }
 
-  const selectedColor = SPECIALTY_COLORS[specialty] ?? '#4A5568';
+  function goBack() {
+    onNavigate(contact ? { name: 'detail', contactId: contact.id } : { name: 'rolodex' });
+  }
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <StatusBar barStyle="light-content" backgroundColor="#1a1f36" />
+    <div className="page">
+      <div className="page-header">
+        <button className="btn-ghost" onClick={goBack}>Cancel</button>
+        <span className="header-title" style={{ fontSize: 17 }}>
+          {isEdit ? 'Edit Contact' : 'New Contact'}
+        </span>
+        <button className="btn-primary" onClick={handleSave}>Save</button>
+      </div>
 
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() =>
-            onNavigate(contact ? { name: 'detail', contactId: contact.id } : { name: 'rolodex' })
-          }
-          style={styles.cancelBtn}>
-          <Text style={styles.cancelText}>Cancel</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>{isEdit ? 'Edit Contact' : 'New Contact'}</Text>
-        <TouchableOpacity onPress={handleSave} style={styles.saveBtn}>
-          <Text style={styles.saveText}>Save</Text>
-        </TouchableOpacity>
-      </View>
+      <div className="page-content">
 
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Basic Info</Text>
-            <View style={styles.card}>
-              <Field
-                label="Full Name *"
+        <div className="info-section">
+          <div className="section-label">Basic Info</div>
+          <div className="form-card">
+            <div className="form-field">
+              <label className="form-label">Full Name *</label>
+              <input
+                className="form-input"
                 value={name}
-                onChange={v => {
-                  setName(v);
-                  setNameError('');
-                }}
+                onChange={e => { setName(e.target.value); setNameError(''); }}
                 placeholder="e.g. Dr. Jane Smith"
               />
-              {nameError ? <Text style={styles.errorText}>{nameError}</Text> : null}
-            </View>
-          </View>
+              {nameError && <div className="form-error">{nameError}</div>}
+            </div>
+          </div>
+        </div>
 
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Specialty</Text>
-            <TouchableOpacity
-              style={styles.specialtySelector}
-              onPress={() => setShowSpecialtyPicker(v => !v)}>
-              <View style={[styles.specialtyDot, { backgroundColor: selectedColor }]} />
-              <Text style={styles.specialtyName}>{specialty}</Text>
-              <Text style={styles.chevron}>{showSpecialtyPicker ? '▲' : '▼'}</Text>
-            </TouchableOpacity>
-            {showSpecialtyPicker && (
-              <View style={styles.specialtyGrid}>
-                {SPECIALTIES.map(s => {
-                  const c = SPECIALTY_COLORS[s] ?? '#4A5568';
-                  const active = s === specialty;
-                  return (
-                    <TouchableOpacity
-                      key={s}
-                      style={[styles.specialtyChip, active && { backgroundColor: c + '22', borderColor: c }]}
-                      onPress={() => {
-                        setSpecialty(s);
-                        setShowSpecialtyPicker(false);
-                      }}>
-                      <View style={[styles.chipDot, { backgroundColor: c }]} />
-                      <Text style={[styles.chipText, active && { color: c, fontWeight: '700' }]}>
-                        {s}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
-            )}
-          </View>
+        <div className="info-section">
+          <div className="section-label">Specialty</div>
+          <button className="specialty-selector" onClick={() => setShowPicker(v => !v)}>
+            <div className="specialty-selector-dot" style={{ backgroundColor: color }} />
+            <span className="specialty-selector-name">{specialty}</span>
+            <span className="specialty-selector-arrow">{showPicker ? '▲' : '▼'}</span>
+          </button>
+          {showPicker && (
+            <div className="specialty-grid">
+              {SPECIALTIES.map(s => {
+                const c = SPECIALTY_COLORS[s] ?? '#4A5568';
+                const active = s === specialty;
+                return (
+                  <button
+                    key={s}
+                    className={`specialty-chip${active ? ' active' : ''}`}
+                    style={active ? { backgroundColor: c + '22', borderColor: c, color: c } : {}}
+                    onClick={() => { setSpecialty(s); setShowPicker(false); }}
+                  >
+                    <div className="chip-dot" style={{ backgroundColor: c }} />
+                    {s}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
 
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Contact Info</Text>
-            <View style={styles.card}>
-              <Field
-                label="Phone"
+        <div className="info-section">
+          <div className="section-label">Contact Info</div>
+          <div className="form-card">
+            <div className="form-field">
+              <label className="form-label">Phone</label>
+              <input
+                className="form-input"
                 value={phone}
-                onChange={setPhone}
+                onChange={e => setPhone(e.target.value)}
                 placeholder="(555) 000-0000"
-                keyboardType="phone-pad"
+                type="tel"
               />
-              <Field
-                label="Email"
+            </div>
+            <div className="form-field">
+              <label className="form-label">Email</label>
+              <input
+                className="form-input"
                 value={email}
-                onChange={setEmail}
+                onChange={e => setEmail(e.target.value)}
                 placeholder="name@example.com"
-                keyboardType="email-address"
+                type="email"
               />
-              <Field
-                label="Company / Organization"
+            </div>
+            <div className="form-field">
+              <label className="form-label">Company / Organization</label>
+              <input
+                className="form-input"
                 value={company}
-                onChange={setCompany}
+                onChange={e => setCompany(e.target.value)}
                 placeholder="e.g. General Hospital"
               />
-            </View>
-          </View>
+            </div>
+          </div>
+        </div>
 
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Notes</Text>
-            <View style={styles.card}>
-              <Field
-                label="Notes"
+        <div className="info-section">
+          <div className="section-label">Notes</div>
+          <div className="form-card">
+            <div className="form-field">
+              <label className="form-label">Notes</label>
+              <textarea
+                className="form-textarea"
                 value={notes}
-                onChange={setNotes}
+                onChange={e => setNotes(e.target.value)}
                 placeholder="Add any notes, reminders, or details..."
-                multiline
               />
-            </View>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
   );
 }
-
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: '#f3f4f6' },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: '#1a1f36',
-    paddingHorizontal: 20,
-    paddingVertical: 14,
-  },
-  cancelBtn: { paddingVertical: 4, paddingRight: 8 },
-  cancelText: { color: '#a5b4fc', fontSize: 16 },
-  headerTitle: { fontSize: 17, fontWeight: '700', color: '#ffffff' },
-  saveBtn: {
-    backgroundColor: '#6366f1',
-    paddingHorizontal: 16,
-    paddingVertical: 7,
-    borderRadius: 18,
-  },
-  saveText: { color: '#fff', fontWeight: '600', fontSize: 14 },
-  content: { padding: 16, paddingBottom: 60 },
-  section: { marginBottom: 20 },
-  sectionTitle: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#9ca3af',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    marginBottom: 8,
-    marginLeft: 4,
-  },
-  card: {
-    backgroundColor: '#ffffff',
-    borderRadius: 14,
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  field: { paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#f3f4f6' },
-  fieldLabel: { fontSize: 12, fontWeight: '600', color: '#9ca3af', marginBottom: 4 },
-  fieldInput: { fontSize: 15, color: '#111827', paddingVertical: 0 },
-  fieldInputMulti: { minHeight: 90, paddingTop: 4 },
-  errorText: { fontSize: 12, color: '#ef4444', marginTop: 4, marginBottom: 4 },
-  specialtySelector: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
-    borderRadius: 14,
-    padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  specialtyDot: { width: 12, height: 12, borderRadius: 6, marginRight: 10 },
-  specialtyName: { flex: 1, fontSize: 15, fontWeight: '600', color: '#111827' },
-  chevron: { color: '#9ca3af', fontSize: 12 },
-  specialtyGrid: {
-    backgroundColor: '#ffffff',
-    borderRadius: 14,
-    padding: 12,
-    marginTop: 8,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  specialtyChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderRadius: 20,
-    borderWidth: 1.5,
-    borderColor: '#e5e7eb',
-    backgroundColor: '#f9fafb',
-  },
-  chipDot: { width: 8, height: 8, borderRadius: 4, marginRight: 6 },
-  chipText: { fontSize: 13, color: '#374151', fontWeight: '500' },
-});
